@@ -91,20 +91,19 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
     }
 
     @Override
-//    @PreAuthorize("ADMIN")
     @PreAuthorize("hasRole('ADMIN')")
     public void update(int categoryId, Category category) {
         String query = "UPDATE categories SET name = ?, description = ? WHERE category_id = ?";
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setString(1,category.getName());
-            preparedStatement.setString(2,category.getDescription());
-            preparedStatement.setInt(3,categoryId);
+        ) {
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setString(2, category.getDescription());
+            preparedStatement.setInt(3, categoryId);
 
             int rowsUpdated = preparedStatement.executeUpdate();
-            if(rowsUpdated > 0){
+            if (rowsUpdated > 0) {
                 System.out.println("Rows updated " + rowsUpdated);
             } else {
                 System.out.println("No rows updated");
@@ -115,8 +114,24 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(int categoryId) {
-        // delete category
+        String query = "DELETE FROM categories WHERE category_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setInt(1,categoryId);
+            int rowsDeleted = preparedStatement.executeUpdate();
+            if(rowsDeleted > 0){
+                System.out.println("Rows deleted " + rowsDeleted);
+            } else {
+                System.out.println("No rows deleted");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private Category mapRow(ResultSet resultSet) throws SQLException {
