@@ -5,8 +5,10 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
+import org.yearup.models.Product;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,41 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
 
         return null;
     }
+
+    @Override
+    public List<Product> getProductsById(int categoryId) {
+        List<Product> products = new ArrayList<>();
+        String query = "SELECT * FROM products WHERE category_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setInt(1,categoryId);
+            try (
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    ) {
+                while(resultSet.next()){
+                    int productId = resultSet.getInt("product_id");
+                    String name = resultSet.getString("name");
+                    BigDecimal price =resultSet.getBigDecimal("price");
+//                    int categoryId =resultSet.getInt("category_id");
+                    String description = resultSet.getString("description");
+                    String color = resultSet.getString("color");
+                    int stock = resultSet.getInt("stock");
+                    boolean isFeatured = resultSet.getBoolean("featured");
+                    String imageUrl = resultSet.getString("image_url");
+
+                    Product product = new Product(productId, name, price, categoryId, description, color, stock, isFeatured, imageUrl);
+                    products.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    ;
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
@@ -120,10 +157,10 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setInt(1,categoryId);
+        ) {
+            preparedStatement.setInt(1, categoryId);
             int rowsDeleted = preparedStatement.executeUpdate();
-            if(rowsDeleted > 0){
+            if (rowsDeleted > 0) {
                 System.out.println("Rows deleted " + rowsDeleted);
             } else {
                 System.out.println("No rows deleted");
