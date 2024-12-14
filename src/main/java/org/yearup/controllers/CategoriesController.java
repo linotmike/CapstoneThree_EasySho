@@ -47,11 +47,11 @@ public class CategoriesController {
         return null;
     }
 
-    // add annotation to call this method for a POST action
-    // add annotation to ensure that only an ADMIN can call this function
+
+    @PostMapping
     public Category addCategory(@RequestBody Category category) {
-        // insert the category
-        return null;
+
+        return categoryDao.create(category);
     }
 
     // add annotation to call this method for a PUT (update) action - the url path must include the categoryId

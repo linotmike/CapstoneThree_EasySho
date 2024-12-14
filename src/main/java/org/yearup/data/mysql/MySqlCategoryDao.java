@@ -5,10 +5,7 @@ import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +41,12 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setInt(1,categoryId);
+        ) {
+            preparedStatement.setInt(1, categoryId);
             try (
                     ResultSet resultSet = preparedStatement.executeQuery();
-                    ) {
-                if(resultSet.next()){
+            ) {
+                if (resultSet.next()) {
                     return mapRow(resultSet);
                 }
             }
@@ -62,7 +59,31 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao {
 
     @Override
     public Category create(Category category) {
-        // create a new category
+        String query = "INSERT INTO categories (name,description) VALUES (?,?)";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        ) {
+            preparedStatement.setString(1, category.getName());
+            preparedStatement.setString(2, category.getDescription());
+
+            int rowsCreated = preparedStatement.executeUpdate();
+            if (rowsCreated > 0) {
+                System.out.println("Rows created " + rowsCreated);
+                try (
+                        ResultSet resultSet = preparedStatement.getGeneratedKeys();
+                ) {
+                    if (resultSet.next()) {
+                        category.setCategoryId(resultSet.getInt(1));
+                        return category;
+                    }
+                }
+            } else {
+                System.out.println("No rows created");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
