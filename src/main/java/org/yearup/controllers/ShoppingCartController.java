@@ -16,13 +16,11 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
-// convert this class to a REST controller
-// only logged in users should have access to these actions
+
 @RestController
 @RequestMapping("cart")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ShoppingCartController {
-    // a shopping cart requires
     private ShoppingCartDao shoppingCartDao;
     private UserDao userDao;
     private ProductDao productDao;
@@ -46,8 +44,7 @@ public class ShoppingCartController {
     }
 
 
-    // add a POST method to add a product to the cart - the url should be
-    // https://localhost:8080/cart/products/15 (15 is the productId to be added
+
 
 @PostMapping("products/{productId}")
     public ResponseEntity<Map<String,String>>create (Principal principal, @PathVariable int productId){
@@ -72,5 +69,15 @@ public class ShoppingCartController {
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
+@DeleteMapping
+    public ResponseEntity<Map<String,String>> deleteCart (Principal principal){
+        String username = principal.getName();
+        User user = userDao.getByUserName(username);
+        int userId = user.getId();
 
+        shoppingCartDao.deleteCart(userId);
+        Map<String,String> res = new HashMap<>();
+        res.put("message","Shopping cart Deleted");
+        return ResponseEntity.ok(res);
+}
 }

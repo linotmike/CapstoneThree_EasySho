@@ -197,9 +197,9 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
                 PreparedStatement preparedStatement = connection.prepareStatement(query)
         ) {
             preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2,productId);
+            preparedStatement.setInt(2, productId);
             int rowsCreated = preparedStatement.executeUpdate();
-            if(rowsCreated > 0){
+            if (rowsCreated > 0) {
                 System.out.println("Rows created " + rowsCreated);
             } else {
                 System.out.println("No rows created");
@@ -208,5 +208,25 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void deleteCart(int id) {
+        String query = "DELETE FROM shopping_cart WHERE user_id = ?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setInt(1,id);
+
+            int rowsDeleted = preparedStatement.executeUpdate();
+            if(rowsDeleted > 0){
+                System.out.println("Rows deleted " + rowsDeleted);
+            } else{
+                System.out.println("No rows deleted");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
