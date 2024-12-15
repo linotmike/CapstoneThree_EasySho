@@ -88,8 +88,8 @@ CREATE TABLE shopping_cart (
     product_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
     PRIMARY KEY (user_id, product_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );
 
 
@@ -217,4 +217,5 @@ VALUES  ('Laptop', 999.99, 1, 'A high-performance laptop for work and entertainm
 -- add shopping cart items
 INSERT INTO shopping_cart (user_id, product_id, quantity)
 VALUES  (3, 8, 1),
-        (3, 10, 1);
+        (3, 10, 1),
+        (2, 1, 2);
