@@ -155,12 +155,12 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query)
 
-                ) {
-            preparedStatement.setInt(1,userId);
+        ) {
+            preparedStatement.setInt(1, userId);
             try (
                     ResultSet resultSet = preparedStatement.executeQuery();
-                    ) {
-                while (resultSet.next()){
+            ) {
+                while (resultSet.next()) {
                     int productId = resultSet.getInt("product_id");
                     String name = resultSet.getString("name");
                     BigDecimal price = resultSet.getBigDecimal("price");
@@ -171,7 +171,7 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
                     String imageUrl = resultSet.getString("image_url");
                     boolean featured = resultSet.getBoolean("featured");
 
-                    Product product = new Product(productId,name,price,categoryId,description,color,stock,featured,imageUrl);
+                    Product product = new Product(productId, name, price, categoryId, description, color, stock, featured, imageUrl);
                     ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
 
                     shoppingCartItem.setProduct(product);
@@ -183,8 +183,30 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Error fetching shopping cart" + userId +e);
+            throw new RuntimeException("Error fetching shopping cart" + userId + e);
         }
         return shoppingCart;
+    }
+
+    @Override
+    public void addToCart(int userId, int productId) {
+        String query = "INSERT INTO shopping_cart (user_id,product_id,quantity) VALUES (?,?,1) " +
+                "ON DUPLICATE KEY UPDATE quantity = quantity + 1";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)
+        ) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2,productId);
+            int rowsCreated = preparedStatement.executeUpdate();
+            if(rowsCreated > 0){
+                System.out.println("Rows created " + rowsCreated);
+            } else {
+                System.out.println("No rows created");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
