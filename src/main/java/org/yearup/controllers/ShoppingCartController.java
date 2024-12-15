@@ -70,8 +70,13 @@ public class ShoppingCartController {
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
+        boolean productExists = shoppingCartDao.productExists(userId,productId);
+        if(!productExists){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found in cart");
+        }
 
         shoppingCartDao.updateCart(userId,productId, shoppingCartItem.getQuantity());
+
         Map<String,String>res = new HashMap<>();
         res.put("Message" ,"Product updated ");
         return ResponseEntity.ok(res);

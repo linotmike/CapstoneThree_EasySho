@@ -246,10 +246,36 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
                 System.out.println("Rows updated " + rowsUpdated);
             } else{
                 System.out.println("No rows updated.Inserting new row");
-
+//                String insertQuery = "INSERT INTO shopping_cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
+//                try (PreparedStatement insertStatement = connection.prepareStatement(insertQuery)) {
+//                    insertStatement.setInt(1, userId);
+//                    insertStatement.setInt(2, productId);
+//                    insertStatement.setInt(3, quantity);
+//                    int rowsInserted = insertStatement.executeUpdate();
+//                    System.out.println("Rows inserted: " + rowsInserted);
+//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean productExists(int userId, int productId){
+        String query = "SELECT COUNT(*) FROM shopping_cart WHERE user_id =? AND product_id =?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+        ) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, productId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                int count = resultSet.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
