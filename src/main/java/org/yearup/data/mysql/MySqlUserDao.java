@@ -1,6 +1,7 @@
 package org.yearup.data.mysql;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
@@ -216,14 +217,36 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setInt(1,id);
+        ) {
+            preparedStatement.setInt(1, id);
 
             int rowsDeleted = preparedStatement.executeUpdate();
-            if(rowsDeleted > 0){
+            if (rowsDeleted > 0) {
                 System.out.println("Rows deleted " + rowsDeleted);
-            } else{
+            } else {
                 System.out.println("No rows deleted");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateCart(int userId, int productId, int quantity) {
+        String query = "UPDATE shopping_cart SET quantity = ? WHERE user_id = ? AND product_id = ? ";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setInt(1,quantity);
+            preparedStatement.setInt(2,userId);
+            preparedStatement.setInt(3,productId);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0){
+                System.out.println("Rows updated " + rowsUpdated);
+            } else{
+                System.out.println("No rows updated.Inserting new row");
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
