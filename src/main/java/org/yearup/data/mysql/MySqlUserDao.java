@@ -259,7 +259,7 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
             e.printStackTrace();
         }
     }
-
+    @Override
     public boolean productExists(int userId, int productId){
         String query = "SELECT COUNT(*) FROM shopping_cart WHERE user_id =? AND product_id =?";
         try (

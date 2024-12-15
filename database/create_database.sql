@@ -102,7 +102,7 @@ VALUES  ('user','$2a$10$NkufUPF3V8dEPSZeo1fzHe9ScBu.LOay9S3N32M84yuUM2OJYEJ/.','
 /* INSERT Profiles */
 INSERT INTO profiles (user_id, first_name, last_name, phone, email, address, city, state, zip)
 VALUES  (1, 'Joe', 'Joesephus', '800-555-1234', 'joejoesephus@email.com', '789 Oak Avenue', 'Dallas', 'TX', '75051'),
-        (2, 'Adam', 'Admamson', '800-555-1212', 'aaadamson@email.com', '456 Elm Street','Dallas','TX','75052'),
+        (2, 'Birhanu', 'Mengistu', '800-555-1212', 'Birhanu@email.com', '456 Elm Street','Dallas','TX','75052'),
         (3, 'George', 'Jetson', '800-555-9876', 'george.jetson@email.com', '123 Birch Parkway','Dallas','TX','75051')     ;
 
 /* INSERT Categories */
