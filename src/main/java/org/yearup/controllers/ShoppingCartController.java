@@ -21,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("cart")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
+@CrossOrigin(origins = "*")
 public class ShoppingCartController {
     private ShoppingCartDao shoppingCartDao;
     private UserDao userDao;
@@ -48,16 +49,17 @@ public class ShoppingCartController {
 
 
 @PostMapping("products/{productId}")
-    public ResponseEntity<Map<String,String>>create (Principal principal, @PathVariable int productId){
+@ResponseStatus(value= HttpStatus.CREATED)
+    public ResponseEntity<ShoppingCart>create (Principal principal, @PathVariable int productId){
         try{
             String username = principal.getName();
             User user = userDao.getByUserName(username);
             int userId = user.getId();
 
-             shoppingCartDao.addToCart(userId,productId);
-             Map<String, String> res = new HashMap<>();
-             res.put("message","Product added to the shopping cart");
-             return ResponseEntity.ok(res);
+            ShoppingCart updatedCart= shoppingCartDao.addToCart(userId,productId);
+//             Map<String, String> res = new HashMap<>();
+//             res.put("message","Product added to the shopping cart");
+             return ResponseEntity.ok(updatedCart);
         }catch(Exception e){
             e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Oops... our bad.");
@@ -66,7 +68,7 @@ public class ShoppingCartController {
 
 
     @PutMapping("products/{productId}")
-    public ResponseEntity<Map<String,String>> updateCart (Principal principal, @PathVariable int productId, @RequestBody ShoppingCartItem shoppingCartItem){
+    public ResponseEntity<ShoppingCart> updateCart (Principal principal, @PathVariable int productId, @RequestBody ShoppingCartItem shoppingCartItem){
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
@@ -75,23 +77,23 @@ public class ShoppingCartController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found in cart");
         }
 
-        shoppingCartDao.updateCart(userId,productId, shoppingCartItem.getQuantity());
+        ShoppingCart updateCart = shoppingCartDao.updateCart(userId,productId, shoppingCartItem.getQuantity());
 
-        Map<String,String>res = new HashMap<>();
-        res.put("Message" ,"Product updated ");
-        return ResponseEntity.ok(res);
+//        Map<String,String>res = new HashMap<>();
+//        res.put("Message" ,"Product updated ");
+        return ResponseEntity.ok(updateCart);
     }
 
 
 @DeleteMapping
-    public ResponseEntity<Map<String,String>> deleteCart (Principal principal){
+    public ResponseEntity<ShoppingCart> deleteCart (Principal principal){
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
 
-        shoppingCartDao.deleteCart(userId);
-        Map<String,String> res = new HashMap<>();
-        res.put("message","Shopping cart Deleted");
-        return ResponseEntity.ok(res);
+        ShoppingCart deleteCart =shoppingCartDao.deleteCart(userId);
+//        Map<String,String> res = new HashMap<>();
+//        res.put("message","Shopping cart Deleted");
+        return ResponseEntity.ok(deleteCart);
 }
 }

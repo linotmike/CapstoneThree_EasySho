@@ -44,12 +44,12 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao {
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                ) {
-            preparedStatement.setInt(1,id);
+        ) {
+            preparedStatement.setInt(1, id);
             try (
                     ResultSet resultSet = preparedStatement.executeQuery();
-                    ) {
-                if(resultSet.next()){
+            ) {
+                if (resultSet.next()) {
                     String firstName = resultSet.getString("first_name");
                     String lastName = resultSet.getString("last_name");
                     String phone = resultSet.getString("phone");
@@ -59,8 +59,38 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao {
                     String state = resultSet.getString("state");
                     String zip = resultSet.getString("zip");
 
-                    return new Profile(id,firstName,lastName,phone,email,address,city,state,zip);
+                    return new Profile(id, firstName, lastName, phone, email, address, city, state, zip);
                 }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Profile update(int id, Profile profile) {
+        String query = "UPDATE profiles SET first_name =?, last_name =?, phone =?, email =?, address =?, city =?, state =?, zip =? WHERE user_id =?";
+        try (
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setString(1,profile.getFirstName());
+            preparedStatement.setString(2,profile.getLastName());
+            preparedStatement.setString(3,profile.getPhone());
+            preparedStatement.setString(4,profile.getEmail());
+            preparedStatement.setString(5,profile.getAddress());
+            preparedStatement.setString(6,profile.getCity());
+            preparedStatement.setString(7,profile.getState());
+            preparedStatement.setString(8,profile.getZip());
+            preparedStatement.setInt(9,id);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if(rowsUpdated > 0){
+                System.out.println("Rows updated "+ rowsUpdated);
+                return getByUserId(id);
+            }else{
+                System.out.println("No rows updated");
             }
         } catch (SQLException e) {
             e.printStackTrace();

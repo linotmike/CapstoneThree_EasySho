@@ -190,7 +190,7 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
     }
 
     @Override
-    public void addToCart(int userId, int productId) {
+    public ShoppingCart addToCart(int userId, int productId) {
         String query = "INSERT INTO shopping_cart (user_id,product_id,quantity) VALUES (?,?,1) " +
                 "ON DUPLICATE KEY UPDATE quantity = quantity + 1";
         try (
@@ -206,13 +206,15 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
                 System.out.println("No rows created");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            throw new RuntimeException("Error adding to shopping cart" + userId + productId + e);
         }
+        return getByUserId(userId);
 
     }
 
     @Override
-    public void deleteCart(int id) {
+    public ShoppingCart deleteCart(int id) {
         String query = "DELETE FROM shopping_cart WHERE user_id = ?";
         try (
                 Connection connection = getConnection();
@@ -229,10 +231,11 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return getByUserId(id);
     }
 
     @Override
-    public void updateCart(int userId, int productId, int quantity) {
+    public ShoppingCart updateCart(int userId, int productId, int quantity) {
         String query = "UPDATE shopping_cart SET quantity = ? WHERE user_id = ? AND product_id = ? ";
         try (
                 Connection connection = getConnection();
@@ -258,6 +261,7 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return getByUserId(userId);
     }
     @Override
     public boolean productExists(int userId, int productId){

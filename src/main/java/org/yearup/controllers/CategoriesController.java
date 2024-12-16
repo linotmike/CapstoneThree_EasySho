@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("categories")
-@CrossOrigin()
+@CrossOrigin(origins = "*")
 public class CategoriesController {
     private CategoryDao categoryDao;
     private ProductDao productDao;
