@@ -11,12 +11,13 @@ public class Profile
     private String city = "";
     private String state = "";
     private String zip = "";
+    private String imageUrl = "";
 
     public Profile()
     {
     }
 
-    public Profile(int userId, String firstName, String lastName, String phone, String email, String address, String city, String state, String zip)
+    public Profile(int userId, String firstName, String lastName, String phone, String email, String address, String city, String state, String zip, String imageUrl)
     {
         this.userId = userId;
         this.firstName = firstName;
@@ -27,6 +28,7 @@ public class Profile
         this.city = city;
         this.state = state;
         this.zip = zip;
+        this.imageUrl = imageUrl;
     }
 
     public int getUserId()
@@ -117,5 +119,13 @@ public class Profile
     public void setZip(String zip)
     {
         this.zip = zip;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

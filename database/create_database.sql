@@ -32,6 +32,7 @@ CREATE TABLE profiles (
     city VARCHAR(50) NOT NULL,
     state VARCHAR(50) NOT NULL,
     zip VARCHAR(20) NOT NULL,
+    image_url VARCHAR(255) ,
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

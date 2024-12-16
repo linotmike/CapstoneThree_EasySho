@@ -58,8 +58,9 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao {
                     String city = resultSet.getString("city");
                     String state = resultSet.getString("state");
                     String zip = resultSet.getString("zip");
+                    String imageUrl = resultSet.getString("image_url");
 
-                    return new Profile(id, firstName, lastName, phone, email, address, city, state, zip);
+                    return new Profile(id, firstName, lastName, phone, email, address, city, state, zip,imageUrl);
                 }
             }
         } catch (SQLException e) {
@@ -70,7 +71,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao {
 
     @Override
     public Profile update(int id, Profile profile) {
-        String query = "UPDATE profiles SET first_name =?, last_name =?, phone =?, email =?, address =?, city =?, state =?, zip =? WHERE user_id =?";
+        String query = "UPDATE profiles SET first_name =?, last_name =?, phone =?, email =?, address =?, city =?, state =?, zip =?, image_url = ? WHERE user_id =?";
         try (
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -83,7 +84,8 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao {
             preparedStatement.setString(6,profile.getCity());
             preparedStatement.setString(7,profile.getState());
             preparedStatement.setString(8,profile.getZip());
-            preparedStatement.setInt(9,id);
+            preparedStatement.setString(9,profile.getImageUrl());
+            preparedStatement.setInt(10,id);
 
             int rowsUpdated = preparedStatement.executeUpdate();
             if(rowsUpdated > 0){
