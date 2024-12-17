@@ -1,5 +1,7 @@
 package org.yearup.data;
 
-public interface OrderDao {
+import org.yearup.models.Order;
 
+public interface OrderDao {
+Order createOrder(Order order);
 }
