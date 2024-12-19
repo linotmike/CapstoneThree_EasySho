@@ -83,7 +83,7 @@ CREATE TABLE order_line_items (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
--- new tables
+
 CREATE TABLE shopping_cart (
 	user_id INT NOT NULL,
     product_id INT NOT NULL,
