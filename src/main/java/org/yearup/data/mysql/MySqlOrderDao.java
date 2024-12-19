@@ -1,15 +1,15 @@
 package org.yearup.data.mysql;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.yearup.data.OrderDao;
-import org.yearup.models.Category;
-import org.yearup.models.Order;
-import org.yearup.models.ShoppingCart;
-import org.yearup.models.ShoppingCartItem;
+import org.yearup.models.*;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
@@ -19,21 +19,19 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
     }
 
     @Override
-    public Order createOrder(Order order ,ShoppingCart shoppingCart) {
+    public Order createOrder(Order order, ShoppingCart shoppingCart) {
 //        Order order = new Order();
-        if(order.getDate() == null){
+        if (order.getDate() == null) {
             order.setDate(LocalDate.now());
         }
         String orderQuery = "INSERT INTO orders (user_id,date,address,city,state,zip,shipping_amount) VALUES (?,?,?,?,?,?,?)";
         String query = "INSERT INTO order_line_items(order_id,product_id,sales_price,quantity,discount) VALUES (?,?,?,?,?)";
+
         try (
-                Connection connection = getConnection();
-        ) {
+                Connection connection = getConnection();) {
             connection.setAutoCommit(false);
             try (
-                    PreparedStatement orderPreparedStatement = connection.prepareStatement(orderQuery, Statement.RETURN_GENERATED_KEYS)
-
-            ) {
+                    PreparedStatement orderPreparedStatement = connection.prepareStatement(orderQuery, Statement.RETURN_GENERATED_KEYS)) {
 
                 orderPreparedStatement.setInt(1, order.getUserId());
                 orderPreparedStatement.setDate(2, Date.valueOf(order.getDate()));
@@ -47,8 +45,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 if (rowsAdded > 0) {
                     System.out.println("Rows added " + rowsAdded);
                     try (
-                            ResultSet resultSet = orderPreparedStatement.getGeneratedKeys()
-                    ) {
+                            ResultSet resultSet = orderPreparedStatement.getGeneratedKeys()) {
                         if (resultSet.next()) {
 //                        for()
                             order.setOrderId(resultSet.getInt(1));
@@ -57,8 +54,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 }
             }
             try (
-                    PreparedStatement preparedStatement = connection.prepareStatement(query)
-            ) {
+                    PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 //                ShoppingCart shoppingCart
                 for (ShoppingCartItem shoppingCartItem : shoppingCart.getItems().values()) {
                     preparedStatement.setInt(1, order.getOrderId());
@@ -69,8 +65,9 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                     preparedStatement.addBatch();
                 }
                 int[] rowsAdded = preparedStatement.executeBatch();
-                System.out.println("order line Rows added " + rowsAdded.length );
+                System.out.println("order line Rows added " + rowsAdded.length);
             }
+
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,4 +75,34 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
 //        return null;
         return order;
     }
+
+    private List<OrderLineItems> getOrderLineItems(int orderId, Connection connection) throws SQLException {
+        List<OrderLineItems> orderLineItems = new ArrayList<>();
+        String query = "SELECT oli.product_id, p.name AS product_name,oli.sales_price, oli.quantity, oli.discount " +
+                "FROM order_line_items oli " +
+                "JOIN products p ON oli.product_id = p.product_id " +
+                "WHERE oli.order_id = ?";
+
+        try (
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ) {
+            preparedStatement.setInt(1,orderId);
+            try (
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    ) {
+                while (resultSet.next()){
+                    OrderLineItems orderLineItem = new OrderLineItems();
+                    orderLineItem.setProductId(resultSet.getInt("product_id"));
+                    orderLineItem.setSales(resultSet.getBigDecimal("sales_price"));
+                    orderLineItem.setQuantity(resultSet.getInt("quantity"));
+                    orderLineItem.setDiscount(resultSet.getBigDecimal("discount"));
+                    orderLineItems.add(orderLineItem);
+                }
+            }
+        }
+
+        return orderLineItems;
+    }
+
+
 }
