@@ -68,6 +68,8 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 System.out.println("order line Rows added " + rowsAdded.length);
             }
 
+            order.setOrderLineItems(getOrderLineItems(order.getOrderId()));
+
             connection.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -76,7 +78,8 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         return order;
     }
 
-    private List<OrderLineItems> getOrderLineItems(int orderId, Connection connection) throws SQLException {
+@Override
+    public List<OrderLineItems> getOrderLineItems(int orderId)  {
         List<OrderLineItems> orderLineItems = new ArrayList<>();
         String query = "SELECT oli.product_id, p.name AS product_name,oli.sales_price, oli.quantity, oli.discount " +
                 "FROM order_line_items oli " +
@@ -84,6 +87,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 "WHERE oli.order_id = ?";
 
         try (
+                Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 ) {
             preparedStatement.setInt(1,orderId);
@@ -99,6 +103,8 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                     orderLineItems.add(orderLineItem);
                 }
             }
+        }catch (SQLException e){
+            e.printStackTrace();
         }
 
         return orderLineItems;

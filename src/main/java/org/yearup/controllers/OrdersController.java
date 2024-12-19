@@ -8,13 +8,12 @@ import org.yearup.data.OrderDao;
 import org.yearup.data.ProfileDao;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
-import org.yearup.models.Order;
-import org.yearup.models.Profile;
-import org.yearup.models.ShoppingCart;
-import org.yearup.models.User;
+import org.yearup.data.mysql.MySqlOrderDao;
+import org.yearup.models.*;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -24,6 +23,7 @@ public class OrdersController {
     private ShoppingCartDao shoppingCartDao;
     private UserDao userDao;
     private ProfileDao profileDao;
+
 
     @Autowired
     public OrdersController(OrderDao orderDao, ShoppingCartDao shoppingCart, UserDao userDao, ProfileDao profileDao) {
@@ -55,6 +55,8 @@ public class OrdersController {
         order.setShipping_amount(BigDecimal.ZERO);
 
         Order newOrder = orderDao.createOrder(order,shoppingCart);
+        List<OrderLineItems> orderLineItems = orderDao.getOrderLineItems(newOrder.getOrderId());
+        newOrder.setOrderLineItems(orderLineItems);
         shoppingCartDao.deleteCart(userId);
         return ResponseEntity.ok(newOrder);
 
