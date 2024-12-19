@@ -35,16 +35,19 @@ public class OrdersController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<Order> createOrder(Principal principal) {
+    public ResponseEntity<?> createOrder(Principal principal) {
         String username = principal.getName();
         User user = userDao.getByUserName(username);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
         int userId = user.getId();
 
         Profile profile = profileDao.getByUserId(userId);
         ShoppingCart shoppingCart = shoppingCartDao.getByUserId(userId);
 
-        if (shoppingCart.getItems().isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+        if (shoppingCart == null || shoppingCart.getItems().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Shopping Cart is empty");
         }
         Order order = new Order();
         order.setUserId(userId);
@@ -52,7 +55,7 @@ public class OrdersController {
         order.setCity(profile.getCity());
         order.setState(profile.getState());
         order.setZip(profile.getZip());
-        order.setShipping_amount(BigDecimal.ZERO);
+        order.setShipping_amount(orderDao.calculateShipping(shoppingCart));
 
         Order newOrder = orderDao.createOrder(order,shoppingCart);
         List<OrderLineItems> orderLineItems = orderDao.getOrderLineItems(newOrder.getOrderId());
@@ -61,6 +64,8 @@ public class OrdersController {
         return ResponseEntity.ok(newOrder);
 
     }
+
+
 }
 
 

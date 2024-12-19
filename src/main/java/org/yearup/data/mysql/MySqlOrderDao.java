@@ -6,6 +6,7 @@ import org.yearup.data.OrderDao;
 import org.yearup.models.*;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
 @Override
     public List<OrderLineItems> getOrderLineItems(int orderId)  {
         List<OrderLineItems> orderLineItems = new ArrayList<>();
-        String query = "SELECT oli.product_id, p.name AS product_name,oli.sales_price, oli.quantity, oli.discount " +
+        String query = "SELECT oli.order_line_item_id,oli.product_id, p.name AS product_name,oli.sales_price, oli.quantity, oli.discount " +
                 "FROM order_line_items oli " +
                 "JOIN products p ON oli.product_id = p.product_id " +
                 "WHERE oli.order_id = ?";
@@ -96,6 +97,8 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                     ) {
                 while (resultSet.next()){
                     OrderLineItems orderLineItem = new OrderLineItems();
+                    orderLineItem.setOrderLineItems(resultSet.getInt("order_line_item_id"));
+                    orderLineItem.setOrderId(orderId);
                     orderLineItem.setProductId(resultSet.getInt("product_id"));
                     orderLineItem.setProductName(resultSet.getString("product_name"));
                     orderLineItem.setSales(resultSet.getBigDecimal("sales_price"));
@@ -109,6 +112,16 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
         }
 
         return orderLineItems;
+    }
+
+    @Override
+    public BigDecimal calculateShipping(ShoppingCart shoppingCart) {
+        BigDecimal cartTotal = shoppingCart.getTotal();
+        if(cartTotal.compareTo(BigDecimal.valueOf(50)) >=0){
+            return BigDecimal.ZERO;
+        } else {
+            return BigDecimal.valueOf(5.99);
+        }
     }
 
 
