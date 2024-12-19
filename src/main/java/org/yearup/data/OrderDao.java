@@ -4,5 +4,5 @@ import org.yearup.models.Order;
 import org.yearup.models.ShoppingCart;
 
 public interface OrderDao {
-Order createOrder(ShoppingCart shoppingCart);
+Order createOrder(Order order,ShoppingCart shoppingCart);
 }

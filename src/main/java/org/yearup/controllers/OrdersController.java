@@ -54,8 +54,8 @@ public class OrdersController {
         order.setZip(profile.getZip());
         order.setShipping_amount(BigDecimal.ZERO);
 
-        Order newOrder = orderDao.createOrder(shoppingCart);
-//        shoppingCartDao.deleteCart(userId);
+        Order newOrder = orderDao.createOrder(order,shoppingCart);
+        shoppingCartDao.deleteCart(userId);
         return ResponseEntity.ok(newOrder);
 
     }

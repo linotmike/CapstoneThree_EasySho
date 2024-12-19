@@ -19,8 +19,8 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
     }
 
     @Override
-    public Order createOrder(ShoppingCart shoppingCart) {
-        Order order = new Order();
+    public Order createOrder(Order order ,ShoppingCart shoppingCart) {
+//        Order order = new Order();
         if(order.getDate() == null){
             order.setDate(LocalDate.now());
         }
@@ -69,7 +69,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                     preparedStatement.addBatch();
                 }
                 int[] rowsAdded = preparedStatement.executeBatch();
-                System.out.println("order line Rows added " + rowsAdded);
+                System.out.println("order line Rows added " + rowsAdded.length );
             }
             connection.commit();
         } catch (SQLException e) {
