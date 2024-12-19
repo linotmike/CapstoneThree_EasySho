@@ -9,6 +9,7 @@ public class OrderLineItems {
     private BigDecimal sales;
     private int quantity;
     private BigDecimal discount;
+    private String productName;
 
     public OrderLineItems(){}
 
@@ -19,6 +20,14 @@ public class OrderLineItems {
         this.sales = sales;
         this.quantity = quantity;
         this.discount = discount;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public int getOrderLineItems() {

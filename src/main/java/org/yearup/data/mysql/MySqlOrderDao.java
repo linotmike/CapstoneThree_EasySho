@@ -97,6 +97,7 @@ public class MySqlOrderDao extends MySqlDaoBase implements OrderDao {
                 while (resultSet.next()){
                     OrderLineItems orderLineItem = new OrderLineItems();
                     orderLineItem.setProductId(resultSet.getInt("product_id"));
+                    orderLineItem.setProductName(resultSet.getString("product_name"));
                     orderLineItem.setSales(resultSet.getBigDecimal("sales_price"));
                     orderLineItem.setQuantity(resultSet.getInt("quantity"));
                     orderLineItem.setDiscount(resultSet.getBigDecimal("discount"));
