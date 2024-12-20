@@ -1,7 +1,7 @@
 package org.yearup.data.mysql;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ShoppingCartDao;
 import org.yearup.data.UserDao;
@@ -232,6 +232,26 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
             e.printStackTrace();
         }
         return getByUserId(id);
+    }
+    @Override
+    public ShoppingCart deleteFromCart(int userId, int productId){
+        String query = "DELETE FROM shopping_cart WHERE user_id = ? AND product_id = ?";
+        try(
+                Connection connection = getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                ){
+            preparedStatement.setInt(1,userId);
+            preparedStatement.setInt(2,productId);
+            int rowsDeleted = preparedStatement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Rows deleted " + rowsDeleted);
+            } else {
+                System.out.println("No rows deleted");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to remove product from cart", e);
+        }
+        return getByUserId(userId);
     }
 
     @Override

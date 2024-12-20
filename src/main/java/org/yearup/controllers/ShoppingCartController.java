@@ -46,38 +46,36 @@ public class ShoppingCartController {
     }
 
 
-
-
-@PostMapping("products/{productId}")
-@ResponseStatus(value= HttpStatus.CREATED)
-    public ResponseEntity<ShoppingCart>create (Principal principal, @PathVariable int productId){
-        try{
+    @PostMapping("products/{productId}")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResponseEntity<ShoppingCart> create(Principal principal, @PathVariable int productId) {
+        try {
             String username = principal.getName();
             User user = userDao.getByUserName(username);
             int userId = user.getId();
 
-            ShoppingCart updatedCart= shoppingCartDao.addToCart(userId,productId);
+            ShoppingCart updatedCart = shoppingCartDao.addToCart(userId, productId);
 //             Map<String, String> res = new HashMap<>();
 //             res.put("message","Product added to the shopping cart");
-             return ResponseEntity.ok(updatedCart);
-        }catch(Exception e){
+            return ResponseEntity.ok(updatedCart);
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Oops... our bad.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
-}
+    }
 
 
     @PutMapping("products/{productId}")
-    public ResponseEntity<ShoppingCart> updateCart (Principal principal, @PathVariable int productId, @RequestBody ShoppingCartItem shoppingCartItem){
+    public ResponseEntity<ShoppingCart> updateCart(Principal principal, @PathVariable int productId, @RequestBody ShoppingCartItem shoppingCartItem) {
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
-        boolean productExists = shoppingCartDao.productExists(userId,productId);
-        if(!productExists){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found in cart");
+        boolean productExists = shoppingCartDao.productExists(userId, productId);
+        if (!productExists) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found in cart");
         }
 
-        ShoppingCart updateCart = shoppingCartDao.updateCart(userId,productId, shoppingCartItem.getQuantity());
+        ShoppingCart updateCart = shoppingCartDao.updateCart(userId, productId, shoppingCartItem.getQuantity());
 
 //        Map<String,String>res = new HashMap<>();
 //        res.put("Message" ,"Product updated ");
@@ -85,15 +83,34 @@ public class ShoppingCartController {
     }
 
 
-@DeleteMapping
-    public ResponseEntity<ShoppingCart> deleteCart (Principal principal){
+    @DeleteMapping
+    public ResponseEntity<ShoppingCart> deleteCart(Principal principal) {
         String username = principal.getName();
         User user = userDao.getByUserName(username);
         int userId = user.getId();
 
-        ShoppingCart deleteCart =shoppingCartDao.deleteCart(userId);
+        ShoppingCart deleteCart = shoppingCartDao.deleteCart(userId);
 //        Map<String,String> res = new HashMap<>();
 //        res.put("message","Shopping cart Deleted");
         return ResponseEntity.ok(deleteCart);
-}
+    }
+
+    @DeleteMapping("products/{productId}")
+    public ResponseEntity<ShoppingCart> deleteFromCart(Principal principal, @PathVariable int productId) {
+        try {
+            String username = principal.getName();
+            User user = userDao.getByUserName(username);
+            int userId = user.getId();
+
+            ShoppingCart removeProduct = shoppingCartDao.deleteFromCart(userId, productId);
+
+            ShoppingCart shoppingCart = shoppingCartDao.getByUserId(userId);
+            return ResponseEntity.ok(shoppingCart);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to remove product", e);
+        }
+
+    }
+
 }
