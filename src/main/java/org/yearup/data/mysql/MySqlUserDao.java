@@ -234,13 +234,13 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
         return getByUserId(id);
     }
     @Override
-    public ShoppingCart deleteFromCart(int userId, int productId){
+    public ShoppingCart deleteFromCart(int id, int productId){
         String query = "DELETE FROM shopping_cart WHERE user_id = ? AND product_id = ?";
         try(
                 Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 ){
-            preparedStatement.setInt(1,userId);
+            preparedStatement.setInt(1,id);
             preparedStatement.setInt(2,productId);
             int rowsDeleted = preparedStatement.executeUpdate();
             if (rowsDeleted > 0) {
@@ -251,7 +251,7 @@ public class MySqlUserDao extends MySqlDaoBase implements UserDao, ShoppingCartD
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove product from cart", e);
         }
-        return getByUserId(userId);
+        return getByUserId(id);
     }
 
     @Override

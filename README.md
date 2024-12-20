@@ -35,36 +35,38 @@ To use this application:
 </ul>
 
 ### Get all categories
-![Screenshot ]()
+![Screenshot ](./src/demo/getAllCategories.png)
 ### Get categories by id
-![Screenshot ]()
+![Screenshot ](./src/demo/getCategoriesById.png)
 ### Post categories
-![Screenshot ]()
+![Screenshot ](./src/demo/postCategories.png)
 ### update categories
-![Screenshot ]()
+![Screenshot ](./src/demo/updateCategories.png)
 ### Delete Categories
-![Screenshot ]()
+![Screenshot ](./src/demo/deleteCategories.png)
 
 ## Products
 <ul>
 <li>GET /products - Fetch all products, with optional filters (e.g., price, color, category) </li>
 
 <li>GET /products/{id} - Fetch a product.</li>
+<li>GET categories/{id}/products - Get products by category id</li>
 <li>POST /products - Add a new product.</li>
 <li>PUT /products/{id} - Update product details.</li>
 <li>DELETE /products/{id} - Remove a product.</li>
 </ul>
 
 ### Get all products
-![Screenshot ]()
+![Screenshot ](./src/demo/getAllProducts.png)
 ### Get products by id
-![Screenshot ]()
+![Screenshot ](./src/demo/getProductById.png)
+### Get products by category id
+![Screenshot ](./src/demo/getProductsById.png)
 ### Post products
-![Screenshot ]()
-### update products
-![Screenshot ]()
-### Delete products
-![Screenshot ]()
+![Screenshot ](./src/demo/sortProducts.png)
+### Sort products
+![Screenshot ](./src/demo/sortProducts.png)
+
 
 ## Shopping Cart
 <ul>
@@ -75,13 +77,15 @@ To use this application:
 </ul>
 
 ### Get current shopping cart
-![Screenshot ]()
+![Screenshot ](./src/demo/getCart.png)
 ### Add a product to a shopping cart
-![Screenshot ]()
+![Screenshot ](./src/demo/postProductToCart.png)
 ### update the quantity of a shopping cart
-![Screenshot ]()
+![Screenshot ](./src/demo/updateCart.png)
 ### Delete cart
-![Screenshot ]()
+![Screenshot ](./src/demo/clearCart.png)
+### Delete an item from a product
+![Screenshot](./src/demo/removeAnItemFromCart.png)
 
 ## Profiles
 <ul>
@@ -90,9 +94,9 @@ To use this application:
 </ul>
 
 ### Get user profile
-![Screenshot ]()
+![Screenshot ](./src/demo/getprofile.png)
 ### update user profile
-![Screenshot ]()
+![Screenshot ](./src/demo/updateProfile.png)
 
 ## Order
 <ul>
