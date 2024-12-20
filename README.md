@@ -5,6 +5,10 @@
 The E-Commerce API is a Java-based backend application built with Spring Boot. It supports a full-featured e-commerce system by providing RESTful endpoints to manage products, categories, user profiles, shopping carts, and orders. The API integrates with a MySQL database for persistent data storage and ensures efficient handling of API requests.
 
 This backend API interacts with a frontend project that uses JavaScript, jQuery and HTML to interact with the endpoints.
+
+Link to the frontend repo: https://github.com/linotmike/EasyShop-front-end
+
+Link to the deployed site:
 ## Table of Contents
 
 - [Usage](#usage)
